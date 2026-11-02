@@ -30,6 +30,58 @@ def fdi_to_universal(fdi: int) -> str:
     return chr(ord("P") + t - 1)
 
 
+# Each arch in FDI numbers, patient's right to left; the two rows of a dentition line up
+# tooth over tooth, so the same position in the opposite row is the opposing tooth.
+_ARCHES = {
+    "permanent": (
+        [*range(18, 10, -1), *range(21, 29)],
+        [*range(48, 40, -1), *range(31, 39)],
+    ),
+    "primary": (
+        [*range(55, 50, -1), *range(61, 66)],
+        [*range(85, 80, -1), *range(71, 76)],
+    ),
+}
+
+
+def teeth_fdi(code: int) -> list[int]:
+    """Every FDI tooth a DEXIS tooth code covers, patient's right to left, upper first.
+
+    One tooth is itself. A same-arch pair is the run between the corners. A cross-arch
+    pair (a bitewing) is the upper run from its corner to the tooth over the lower corner,
+    and the lower run from its corner to the tooth under the upper corner, the same span
+    ``teeth_label`` prints. A code that mixes dentitions or does not decode returns its
+    valid corners only, and [] when there are none.
+    """
+    if code <= 0:
+        return []
+    corners = [code] if code < 100 else [code // 100, code % 100]
+    valid = [t for t in corners if _is_fdi(t)]
+    if len(valid) < 2:
+        return valid
+    a, b = valid
+    for upper, lower in _ARCHES.values():
+        if a in upper + lower and b in upper + lower:
+            break
+    else:
+        return valid  # one permanent, one primary
+    if (a in upper) == (b in upper):
+        row = upper if a in upper else lower
+        i, j = sorted((row.index(a), row.index(b)))
+        return row[i : j + 1]
+    up, low = (a, b) if a in upper else (b, a)
+    lo, hi = sorted((upper.index(up), lower.index(low)))
+    return upper[lo : hi + 1] + lower[lo : hi + 1]
+
+
+def _is_fdi(t: int) -> bool:
+    try:
+        fdi_to_universal(t)
+    except ValueError:
+        return False
+    return True
+
+
 def _upper(u: str) -> bool:
     return u.isdigit() and 1 <= int(u) <= 16 or u.isalpha() and u <= "J"
 

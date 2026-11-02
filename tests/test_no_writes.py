@@ -1,11 +1,13 @@
-"""The package is read-only toward DEXIS: no write export may ever be bound."""
+"""The package is read-only toward DEXIS: no write export may ever be bound.
+
+XimgTryExport* is here too: its .tif and .dcm exports write a UID into the source .DEX."""
 
 import re
 from pathlib import Path
 
 SRC = Path(__file__).resolve().parents[1] / "src" / "dexport"
 WRITE = re.compile(
-    r"\b(Xfile(Update|Write|Set|Make|Add)\w*|Xpat\w*(Add|Set)\w*|Xdb\w*(Set|Add|Delete)\w*|Ximg(Set|Delete|TryAdd)\w*)\b"
+    r"\b(Xfile(Update|Write|Set|Make|Add)\w*|Xpat\w*(Add|Set)\w*|Xdb\w*(Set|Add|Delete)\w*|Ximg(Set|Delete|TryAdd|TryExport)\w*)\b"
 )
 
 

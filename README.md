@@ -77,6 +77,14 @@ dexport export 12345 --to "$env:USERPROFILE\Desktop\dexis-12345"
 
 That writes each image as a JPEG that looks the way DEXIS shows it on screen, named after its DEXIS file. Add `--kind xray` or `--kind photo` for one kind, or `--since-days 365` for the last year.
 
+**Moving to other imaging software? Export DICOM.** JPEGs are pictures; DICOM is what imaging software imports as x-rays, with the patient, date, teeth and real-world scale attached:
+
+```powershell
+dexport export 12345 --fmt dcm --to "$env:USERPROFILE\Desktop\dexis-12345-dicom"
+```
+
+Intraoral x-rays come out as the same DICOM object DEXIS's own export writes, with identical pixels. Photos, pans and imported images come out as Secondary Capture. Add `--anonymize` to leave out the patient's name, ID and birthdate, for teaching or sharing. Details in [docs/dicom.md](docs/dicom.md).
+
 ## Updating and removing
 
 ```powershell
@@ -105,14 +113,14 @@ Problems and questions go in [Issues](https://github.com/ReaDent/dexport/issues)
 ```
 dexport doctor                                    arch, DLLs, registration, data root
 dexport info   FILE.DEX [--json]                  metadata without decoding
-dexport decode FILE.DEX [out.jpg] [--raw] [--fmt jpg|png|tif]
+dexport decode FILE.DEX [out.jpg] [--raw] [--fmt jpg|png|tif|dcm] [--anonymize]
 dexport list   PATIENT_ID [--json]                a patient's live images
-dexport export PATIENT_ID --to DIR [--kind xray|photo] [--since-days N] [--raw]
+dexport export PATIENT_ID --to DIR [--fmt jpg|png|tif|dcm] [--kind xray|photo] [--since-days N] [--raw] [--anonymize]
 dexport current [--host NAME | --all] [--json]    which patient DEXIS has open now
 dexport sweep  listing.tsv OUT [--per-cell N]     stratified decode test (path<TAB>date<TAB>size)
 ```
 
-`decode` and `export` match what DEXIS shows by default; `--raw` gives the stored pixels, upright. The data root comes from `--dexis-root`, else `DEXIS_DATA_ROOT`, else `xdata=` in `C:\DEXIS\Dexis.ini`.
+`decode` and `export` match what DEXIS shows by default; `--raw` gives the stored pixels, upright. `--fmt dcm` matches DEXIS's DICOM export instead (stored pixels, saved edit applied, no ClearVu) and ignores `--raw`. The data root comes from `--dexis-root`, else `DEXIS_DATA_ROOT`, else `xdata=` in `C:\DEXIS\Dexis.ini`.
 
 As a library:
 

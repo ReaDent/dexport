@@ -25,7 +25,7 @@ Private TIFF tags carry the metadata. Several hold patient identity, so read the
 | 2339 | full-res width                                      |
 | 2340 | full-res height                                     |
 
-dexport reads none of the identity tags. It gets date, teeth, type and rotation through `xfile.dll`, which also normalises the two capture-date formats.
+Pictures (jpg, png, tif) never read the identity tags. DICOM output reads 1792 to 1795, because the software you import into needs the patient to file the image; `--anonymize` skips them. Date, teeth, type and rotation come through `xfile.dll`, which also normalises the two capture-date formats.
 
 ## Storage format setting
 

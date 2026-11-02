@@ -145,8 +145,8 @@ class Xfile:
         if self.x.XfileTryReadOriLux(p, *o):
             m.rotation = o[0].value
             m.lux = tuple(v.value for v in o[1:])
-        # Two ints (the DLL logs them as "pixw/h=%d %d"); unit not yet confirmed, so they
-        # are passed through as reported.
+        # Sensor pixel pitch in nanometres, as the DLL reports it ("pixw/h=%d %d"). DEXIS's
+        # own DICOM export writes this pair as [second, first] mm (see dicom.py).
         sx, sy = c_int(), c_int()
         if self.x.XfileTryReadPixelSpacing(p, sx, sy) and sx.value > 0:
             m.pixel_spacing = (sx.value, sy.value)

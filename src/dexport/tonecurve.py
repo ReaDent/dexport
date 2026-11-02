@@ -2,7 +2,7 @@
 
 Transcribed from dexxdb.dll 9.5.3 (builder at 0x449b7c; helpers 0x449990, 0x4497c8,
 0x449084, 0x4496b8, 0x449730) and checked against 233 palettes DEXIS wrote through
-XimgTryExportFile, including decreasing and crossed windows: every entry matches. The four
+dexxdb's export call, including decreasing and crossed windows: every entry matches. The four
 numbers are the OriLux window a1, a2, b1, b2 (also the DEXIS.dat window columns).
 
 Shape: a quadratic Bezier from (0, 0) with control (a1, a2) to Q1, a straight line to Q2,

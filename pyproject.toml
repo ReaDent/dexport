@@ -1,12 +1,16 @@
 [project]
 name = "dexport"
-version = "0.2.0"
+version = "0.3.0"
 description = "Read and export your own DEXIS 9 x-rays and photos, through DEXIS's own DLLs"
 readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE"]
 requires-python = ">=3.10"
-dependencies = ["pillow>=10", "numpy>=1.24"]
+dependencies = [
+    "pillow>=10",
+    "numpy>=1.24",
+    "pydicom>=3.0",
+]
 classifiers = [
   "Operating System :: Microsoft :: Windows",
   "Topic :: Scientific/Engineering :: Medical Science Apps.",
@@ -19,7 +23,10 @@ Source = "https://github.com/ReaDent/dexport"
 dexport = "dexport.cli:main"
 
 [dependency-groups]
-dev = ["pytest>=8"]
+dev = [
+    "dicom-validator>=0.9.0",
+    "pytest>=8",
+]
 
 [build-system]
 requires = ["hatchling"]

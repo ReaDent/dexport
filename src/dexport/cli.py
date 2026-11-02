@@ -17,6 +17,8 @@ from . import VERIFIED_DEXIS_VERSION, __version__, arch_ok
 from .catalog import DexisRoot, default_root
 from .registration import RegistrationMissing, config_file, configured
 
+ALL_FORMATS = ["jpg", "png", "tif", "dcm"]  # export.ALL_FORMATS, without importing it
+ANON_HELP = "dcm only: leave out patient name, ID and birthdate"
 ARCH_MSG = "dexport needs 32-bit Windows Python: uv run --python cpython-3.12-windows-x86 dexport ..."
 
 
@@ -38,7 +40,8 @@ def main(argv: list[str] | None = None) -> None:
     p.add_argument("dex", type=Path)
     p.add_argument("out", type=Path, nargs="?")
     p.add_argument("--raw", action="store_true", help="skip the ClearVu display chain")
-    p.add_argument("--fmt", choices=["jpg", "png", "tif"], default="jpg")
+    p.add_argument("--fmt", choices=ALL_FORMATS, default="jpg")
+    p.add_argument("--anonymize", action="store_true", help=ANON_HELP)
     p = sub.add_parser("list", help="a patient's live images")
     p.add_argument("patient_id", type=int, help="DEXIS patient ID")
     p.add_argument("--dexis-root", type=Path, default=None)
@@ -47,8 +50,9 @@ def main(argv: list[str] | None = None) -> None:
     p.add_argument("--to", type=Path, required=True)
     p.add_argument("--kind", choices=["xray", "photo"])
     p.add_argument("--since-days", type=int)
-    p.add_argument("--fmt", choices=["jpg", "png", "tif"], default="jpg")
+    p.add_argument("--fmt", choices=ALL_FORMATS, default="jpg")
     p.add_argument("--raw", action="store_true")
+    p.add_argument("--anonymize", action="store_true", help=ANON_HELP)
     p.add_argument("--dexis-root", type=Path, default=None)
     p = sub.add_parser(
         "current", help="which patient DEXIS has open now (reads <root>\\<host>.pat)"
@@ -95,7 +99,8 @@ def run(a) -> None:
         from .export import Exporter
 
         out = a.out or a.dex.with_suffix("." + a.fmt)
-        r = Exporter(display=not a.raw, **kw).export(a.dex, out, a.fmt, sidecar=a.json)
+        ex = Exporter(display=not a.raw and a.fmt != "dcm", anonymize=a.anonymize, **kw)
+        r = ex.export(a.dex, out, a.fmt, sidecar=a.json)
         print(
             f"{r.source.name}: {r.mode} {r.width}x{r.height} decode={r.decode_ms}ms -> {r.dest}"
         )
@@ -123,7 +128,7 @@ def run(a) -> None:
         from .export import Exporter
 
         root = DexisRoot(a.dexis_root) if a.dexis_root else DexisRoot()
-        ex = Exporter(display=not a.raw, **kw)
+        ex = Exporter(display=not a.raw and a.fmt != "dcm", anonymize=a.anonymize, **kw)
         cutoff = (
             dt.datetime.now() - dt.timedelta(days=a.since_days)
             if a.since_days
@@ -136,7 +141,9 @@ def run(a) -> None:
                 continue
             if cutoff and (m.captured or dt.datetime.fromtimestamp(f.mtime)) < cutoff:
                 continue
-            r = ex.export(f.path, a.to / f"{f.path.stem}.{a.fmt}", a.fmt)
+            r = ex.export(
+                f.path, a.to / f"{f.path.stem}.{a.fmt}", a.fmt, patient_id=a.patient_id
+            )
             print(
                 f"{r.source.name}: {r.mode} {r.width}x{r.height} {r.decode_ms}ms -> {r.dest.name}"
             )
