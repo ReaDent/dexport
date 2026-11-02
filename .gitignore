@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+.venv/
+dist/
+build/
+*.egg-info/
+.pytest_cache/
+
+# never commit DEXIS files, data, or a registration pair
+*.dll
+*.exe
+*.DEX
+*.dex
+registration.txt
+.env
