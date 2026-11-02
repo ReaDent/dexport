@@ -1,6 +1,6 @@
 [project]
 name = "dexport"
-version = "0.1.0"
+version = "0.2.0"
 description = "Read and export your own DEXIS 9 x-rays and photos, through DEXIS's own DLLs"
 readme = "README.md"
 license = "MIT"

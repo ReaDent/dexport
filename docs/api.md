@@ -74,7 +74,7 @@ Covered in [dexxdb.md](dexxdb.md), including two calls that write when you would
 
 ## DEXSRV32.DLL (not used)
 
-`DXL_Open`, `DXL_GetCurrentPatient`, `DXL_GetPatientList`, `DXL_GetPatientData`, `DXL_Close`: which patient is open in DEXIS right now.
+`DXL_Open`, `DXL_GetCurrentPatient`, `DXL_GetPatientList`, `DXL_GetPatientData`, `DXL_Close`: which patient is open in DEXIS right now. dexport does not load this DLL; `current.py` reads the same current-patient signal from the `<HOSTNAME>.pat` file at the data-root top instead (see [format.md](format.md)).
 
 ## Everything else in C:\DEXIS
 

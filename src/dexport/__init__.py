@@ -8,7 +8,7 @@ an ImportError naming the fix instead of failing later inside ctypes.
 import ctypes
 import sys
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 VERIFIED_DEXIS_VERSION = (
     "9.5.3"  # xfile.dll and ClearVuFilter.dll dated 16-May-2023 / 19-Apr-2023

@@ -108,6 +108,7 @@ dexport info   FILE.DEX [--json]                  metadata without decoding
 dexport decode FILE.DEX [out.jpg] [--raw] [--fmt jpg|png|tif]
 dexport list   PATIENT_ID [--json]                a patient's live images
 dexport export PATIENT_ID --to DIR [--kind xray|photo] [--since-days N] [--raw]
+dexport current [--host NAME | --all] [--json]    which patient DEXIS has open now
 dexport sweep  listing.tsv OUT [--per-cell N]     stratified decode test (path<TAB>date<TAB>size)
 ```
 

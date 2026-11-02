@@ -42,6 +42,19 @@ Two fixed-width text indexes in that folder name the live images, one line each,
 
 The indexes are the source of truth: a `.DEX` on disk that no index lists is not a live image. The window columns in `DEXIS.dat` are the same four saved-edit numbers as OriLux, and its x, y columns hold where staff dragged each image on screen.
 
+## Current patient and lock files (the data-root top)
+
+A few bookkeeping files live at the top of the data root (`<root>\`), not inside a patient folder. They let you read which patient DEXIS has open right now without the `DEXSRV32.DLL` session API:
+
+| File             | Content                                                                                                               |
+| ---------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `<HOSTNAME>.pat` | the patient ID open on that workstation, zero-padded, CRLF (`12345\r\n`)                                              |
+| `DEXnet.lck`     | the hostname currently holding the DEXIS network lock (no newline)                                                    |
+| `xpat.log`       | an append log of opened patient folder paths (`d\d\d\d\d\`), last = most recently written, not necessarily still open |
+| `DEXIS.CHK`      | a zero-byte checkpoint flag                                                                                           |
+
+DEXIS rewrites `<HOSTNAME>.pat` as the operator moves between patients, so it is the file-based equivalent of `DXL_GetCurrentPatient`: one file per workstation, named for the host. The ID is DEXIS's patient ID, the same number the patient folder is built from. `current.py` reads these (never writes); `dexport current` prints the patient open on this workstation, `--host NAME` another one, `--all` every workstation.
+
 ## What a real archive contains
 
 From a stratified decode test over five years of one practice's images (a few hundred files picked across year, index side and size band; `dexport sweep` reproduces it on your own data):

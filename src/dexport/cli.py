@@ -51,6 +51,14 @@ def main(argv: list[str] | None = None) -> None:
     p.add_argument("--raw", action="store_true")
     p.add_argument("--dexis-root", type=Path, default=None)
     p = sub.add_parser(
+        "current", help="which patient DEXIS has open now (reads <root>\\<host>.pat)"
+    )
+    p.add_argument("--host", default=None, help="another workstation's name")
+    p.add_argument(
+        "--all", action="store_true", help="every workstation with a patient open"
+    )
+    p.add_argument("--dexis-root", type=Path, default=None)
+    p = sub.add_parser(
         "sweep", help="stratified decode test over a listing (path<TAB>date<TAB>size)"
     )
     p.add_argument("listing", type=Path)
@@ -61,6 +69,11 @@ def main(argv: list[str] | None = None) -> None:
 
     if a.cmd == "doctor":
         return doctor(a)
+    if a.cmd == "current":  # pure file reads, no DLLs or registration needed
+        try:
+            return current(a)
+        except FileNotFoundError as e:
+            sys.exit(str(e))
     if not arch_ok():
         sys.exit(ARCH_MSG)
     try:
@@ -193,6 +206,35 @@ def doctor(a) -> None:
         if a.json
         else "\n".join(f"{k:<22} {v}" for k, v in report.items())
     )
+
+
+def current(a) -> None:
+    from .current import current_patient, hostname, net_lock_holder, open_patients
+
+    root = (DexisRoot(a.dexis_root) if a.dexis_root else DexisRoot()).root
+    if a.all:
+        rows = [
+            {"host": p.host, "patient_id": p.patient_id} for p in open_patients(root)
+        ]
+        lock = net_lock_holder(root)
+        if a.json:
+            print(json.dumps({"open": rows, "net_lock": lock}, indent=1))
+        else:
+            for r in rows:
+                print(f"{r['host']:<16} {r['patient_id']}")
+            if not rows:
+                print("no patient open on any workstation")
+            if lock:
+                print(f"net lock held by {lock}")
+        return
+    host = a.host or hostname()
+    pid = current_patient(root, a.host)
+    if a.json:
+        print(json.dumps({"host": host, "patient_id": pid}, indent=1))
+    elif pid is None:
+        print(f"no patient open on {host}")
+    else:
+        print(f"{host}: patient {pid}")
 
 
 def sweep(listing: Path, out: Path, per_cell: int, seed: int, kw: dict) -> None:
