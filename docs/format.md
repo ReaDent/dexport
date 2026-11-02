@@ -53,6 +53,6 @@ From a stratified decode test over five years of one practice's images (a few hu
 - **Acquisition time** is `HHMMSS`, `HHMM`, or empty (imported files). Undated files also carry rotation 0; fall back to the file's modification time for ordering.
 - **About one x-ray in seven** carries a saved brightness and contrast edit.
 - **Teeth = 0 is common** (imports, pans, and the photos that live on the x-ray side). It is not an error.
-- **Sizes seen:** sensor x-rays 846x662 (older), 1692x1324 (Ti2), 1874x1402, 1200x1600; photos 640x480, 640x528, 2016x1512, 1920x1080, and phone sizes up to 4032x3024.
+- **Sizes seen:** sensor x-rays 844x660 and 846x662 (older), 1692x1324 (Ti2), 1874x1402, 1200x1600, plus the odd scanned or stitched x-ray such as 2077x923; photos 640x480, 640x528, 2016x1512, 1920x1080, 1896x2532, and phone sizes up to 4032x3024. The large imported photos (1512x2016 and up) carry no `DEXIS!` block and decode the same.
 - **Decode time over SMB:** 30 to 150 ms for a typical sensor x-ray, about 400 ms for a 2016x1512 photo, 1.5 s for the largest imports.
 - `XfileReadNumberOfFrames` returned 1 for every file.

@@ -18,7 +18,7 @@ int   XfileTryReadImageSize(const char *path, int *w, int *h, int *bps);  // w/h
 int   XfileTryReadTypeAndTeeth(const char *path, int *type, int *teeth);
 int   XfileTryReadAcquisitionDateTime(const char *path, char *date, char *time); // date YYYYMMDD; time HHMM, HHMMSS, or ""
 int   XfileTryReadOriLux(const char *path, int *rot, int *a1, int *a2, int *b1, int *b2, int *v5, int *v6);
-int   XfileTryReadPixelSpacing(const char *path, int *pixw, int *pixh);   // bound; unit not confirmed
+int   XfileTryReadPixelSpacing(const char *path, int *pixw, int *pixh);   // pixel pitch in nanometres; 0/absent on non-sensor images
 int   XfileTryReadOrientation(const char *path, int *, int *, int *);     // values not decoded
 void *XfileReadThumbnail(const char *path, int maxSize, int *scale);      // same struct as XfileReadImg; free with XfileFreeImg
 int   XfileCheckCrc(const char *path);                                    // 0 intact, 1 CRC mismatch, -1 unreadable
@@ -46,6 +46,8 @@ Pixels are top-down. 24-bit is BGR; 8-bit is one byte per pixel. `XfileReadImg16
 OriLux: `rot` is 0 or 1 for no turn, 2 = 270, 3 = 180, 4 = 90 (Pillow `transpose` constants, mapped from a full-mouth series). `a1, a2, b1, b2` are the saved display window; `a1 == a2 && b1 == b2` (with `a1 <= b1`) means no edit. See [display.md](display.md).
 
 Type codes: 5 intraoral x-ray, 6 x-ray from another system, 9 IOC Snapshot photo, 10 imported file or video frame. Teeth: an int built from FDI numbers, 0 none, `36` one tooth, `1846` two corner teeth (see `teeth.py`).
+
+Pixel spacing: `XfileTryReadPixelSpacing` gives the sensor pixel pitch in nanometres, the same value for width and height. Measured 19500 on the 1692x1324 sensor (19.5 um, the DEXIS Platinum/Ti pitch) and 39000 to 40280 on the 844x660 and 846x662 older sensors. Photos, imported images and scanned x-rays carry none. Verified across 179 files of three patients (2024 to 2026), 0 decode failures.
 
 Exports present but not bound (read side, candidates): `XfileReadNotes`, `XfileTryReadCrownPos`, `XfileTryReadExposureValues`, `XfileTryReadDeviceValues`, `XfileTryReadPatientInfo[Ex]` (patient name and birthdate; deliberately not bound), `XfileIsDicomFile`, `XfileReadImgFromBuffer`.
 
