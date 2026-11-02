@@ -4,6 +4,7 @@ version = "0.3.0"
 description = "Read and export your own DEXIS 9 x-rays and photos, through DEXIS's own DLLs"
 readme = "README.md"
 license = "MIT"
+keywords = ["dental", "dentistry", "dexis", "dental-imaging", "intraoral", "x-ray", "radiography", "dicom", "medical-imaging", "reverse-engineering", "data-export"]
 license-files = ["LICENSE"]
 requires-python = ">=3.10"
 dependencies = [
